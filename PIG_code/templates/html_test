@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Interactive</title>
+
+    <!-- Importation des styles et scripts Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        #map { height: 600px; } /* Taille de la carte */
+    </style>
+</head>
+<body>
+
+    <h2>Carte interactive avec Leaflet.js</h2>
+    <div id="map"></div>
+
+    <script>
+        // Initialisation de la carte centrée sur Paris
+        var map = L.map('map').setView([48.8566, 2.3522], 12);
+        
+        // Ajouter un fond de carte OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Ajouter un marqueur sur Paris
+        L.marker([48.8566, 2.3522]).addTo(map)
+            .bindPopup("Paris, France")
+            .openPopup();
+    </script>
+<script>
+    function loadPoints() {
+        fetch("/get_points")
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(point => {
+                    L.marker([point.lat, point.lon])
+                        .addTo(map)
+                        .bindPopup(point.address);
+                });
+            });
+    }
+
+    // Charger les points existants au chargement de la carte
+    loadPoints();
+</script>
+
+</body>
+</html>
