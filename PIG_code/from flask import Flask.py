@@ -1,5 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 import sqlite3
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 
 app = Flask(__name__)  # Création de l'application Flask
@@ -18,6 +20,19 @@ c.execute("""
         lon REAL
     )
 """)
+# Chemin vers le fichier JSON téléchargé
+cred = credentials.Certificate("PIG.json")
+firebase_admin.initialize_app(cred)
+
+# Connexion à Firestore
+db = firestore.client()
+
+# Lire un document
+doc = db.collection("utilisateurs").document("user1").get()
+if doc.exists:
+    print("Document trouvé:", doc.to_dict())
+else:
+    print("Pas de document trouvé.")
 
 # Liste de points à ajouter
 points = [
